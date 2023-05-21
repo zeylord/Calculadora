@@ -10,9 +10,15 @@ export default function App() {
   function calculator() {
     const splitNumbers = currentNumber.split(' ');
     const firstNumber = parseFloat(splitNumbers[0]);
-    const lastNumber = parseFloat(splitNumbers[2]);
     const operator = splitNumbers[1];
-
+    let lastNumber = parseFloat(splitNumbers[2]);
+  
+    // Calcular a porcentagem
+    if (operator === '%') {
+      lastNumber = firstNumber * (lastNumber / 100);
+    }
+  
+    // Executar a ação referente à tecla pressionada
     switch (operator) {
       case '+':
         setCurrentNumber((firstNumber + lastNumber).toString());
@@ -26,19 +32,22 @@ export default function App() {
       case '/':
         setCurrentNumber((firstNumber / lastNumber).toString());
         break;
-      default:
+      case '%':
+        setCurrentNumber(lastNumber.toString());
         break;
     }
   }
+  
+  
 
   function handleInput(buttonPressed) {
     console.log(buttonPressed); // Mostra no Console a tecla pressionada
-
+  
     if (['+', '-', 'x', '/'].includes(buttonPressed)) {
       setCurrentNumber(currentNumber + ' ' + buttonPressed + ' ');
       return;
     }
-
+  
     switch (buttonPressed) {
       case 'DEL':
         setCurrentNumber(currentNumber.substring(0, currentNumber.length - 2));
@@ -50,15 +59,27 @@ export default function App() {
       case '=':
         setLastNumber(currentNumber + ' = ');
         calculator();
+        // Exibir o resultado com duas casas decimais
+        setCurrentNumber(parseFloat(currentNumber).toFixed(2).toString());
         break;
       case '+/-':
         setCurrentNumber((parseFloat(currentNumber) * -1).toString());
+        break;
+      case '.':
+        if (!currentNumber.includes('.')) {
+          setCurrentNumber(currentNumber + '.');
+        }
+        break;
+      case '%':
+        // Converter o valor em formato de porcentagem para decimal
+        setCurrentNumber((parseFloat(currentNumber) / 100).toString());
         break;
       default:
         setCurrentNumber(currentNumber + buttonPressed);
         break;
     }
   }
+  
 
   return (
     <View style={styles.container}>
